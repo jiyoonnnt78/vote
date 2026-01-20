@@ -116,8 +116,14 @@ function startVoting() {
         return;
     }
     
-    // 투표 선택지 업데이트
+    // 투표 선택지 초기 업데이트
     updateVoteOptions();
+    
+    // 이름 입력 시 선택지 업데이트
+    const voterNameInput = document.getElementById('voterName');
+    if (voterNameInput) {
+        voterNameInput.addEventListener('input', updateVoteOptions);
+    }
     
     // 화면 전환
     document.getElementById('adminInterface').classList.add('hidden');
@@ -128,16 +134,19 @@ function startVoting() {
 function updateVoteOptions() {
     const firstChoice = document.getElementById('firstChoice');
     const secondChoice = document.getElementById('secondChoice');
+    const voterName = document.getElementById('voterName').value.trim();
     
-    const options = students.map(student => 
+    // 자기 이름 제외한 학생 목록
+    const availableStudents = students.filter(student => 
+        student.name !== voterName
+    );
+    
+    const options = availableStudents.map(student => 
         `<option value="${student.id}">${student.name} (${student.number})</option>`
     ).join('');
     
     firstChoice.innerHTML = '<option value="">선택하세요</option>' + options;
     secondChoice.innerHTML = '<option value="">선택하세요</option>' + options;
-    
-    // 실시간 투표 현황 업데이트
-    updateLiveStats();
 }
 
 // 실시간 투표 현황 업데이트
@@ -168,12 +177,18 @@ function updateLiveStats() {
 // 투표 제출
 function submitVote() {
     const grade = document.getElementById('voterGrade').value;
+    const voterName = document.getElementById('voterName').value.trim();
     const firstChoice = document.getElementById('firstChoice').value;
     const secondChoice = document.getElementById('secondChoice').value;
     
     // 유효성 검사
     if (!grade) {
         alert('학년을 입력해주세요.');
+        return;
+    }
+    
+    if (!voterName) {
+        alert('이름을 입력해주세요.');
         return;
     }
     
@@ -193,17 +208,16 @@ function submitVote() {
     
     voters.push({
         grade: grade,
+        name: voterName,
         timestamp: new Date().toISOString(),
         choices: [firstChoice, secondChoice]
     });
     
     saveData();
     
-    // 실시간 투표 현황 업데이트
-    updateLiveStats();
-    
     // 입력 초기화
     document.getElementById('voterGrade').value = '';
+    document.getElementById('voterName').value = '';
     document.getElementById('firstChoice').value = '';
     document.getElementById('secondChoice').value = '';
     
@@ -272,6 +286,9 @@ function showResults() {
     
     const totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
     document.getElementById('totalVotes').textContent = `${totalVotes}표`;
+    
+    // 실시간 투표 현황 업데이트
+    updateLiveStats();
     
     // 화면 전환
     document.getElementById('voterInterface').classList.add('hidden');
