@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>바른비 2인 선정 투표</title>
+    <title>바르미 2인 선정 투표</title>
     <style>
         * {
             margin: 0;
@@ -97,14 +97,15 @@
         }
 
         .student-item {
-            padding: 12px;
-            margin-bottom: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             background: #f8f9fa;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: all 0.2s;
+            gap: 10px;
         }
 
         .student-item:hover {
@@ -123,11 +124,12 @@
         .student-name {
             font-weight: 600;
             color: #333;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
+            font-size: 15px;
         }
 
         .student-number {
-            font-size: 13px;
+            font-size: 12px;
             color: #888;
         }
 
@@ -135,11 +137,12 @@
             background: #ff4757;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
+            padding: 5px 10px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             transition: background 0.2s;
+            white-space: nowrap;
         }
 
         .remove-btn:hover {
@@ -275,7 +278,7 @@
         <!-- 관리자 인터페이스 -->
         <div id="adminInterface">
             <h1>🏆 바른비 2인 선정 투표</h1>
-            <p class="subtitle">대학형 초등학생 투표 시스템</p>
+            <p class="subtitle">대화형 초등학생 투표 시스템</p>
 
             <!-- 학생 추가 섹션 -->
             <div class="section">
