@@ -137,13 +137,12 @@
             background: #ff4757;
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 6px 10px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 11px;
             transition: background 0.2s;
             white-space: nowrap;
-            min-width: 40px;
         }
 
         .remove-btn:hover {
@@ -406,6 +405,10 @@
                     <label for="voterGrade">학년</label>
                     <input type="number" id="voterGrade" placeholder="학년 입력" min="1" max="6">
                 </div>
+                <div class="input-group">
+                    <label for="voterName">이름</label>
+                    <input type="text" id="voterName" placeholder="이름 입력">
+                </div>
             </div>
 
             <div class="section">
@@ -427,17 +430,6 @@
             </div>
 
             <button class="btn-primary" onclick="submitVote()">투표하기</button>
-            
-            <!-- 실시간 투표 현황 -->
-            <div class="section">
-                <div class="live-stats">
-                    <div class="live-stats-title">📊 실시간 투표 현황</div>
-                    <div id="liveVoteStats">
-                        <div class="empty-message" style="padding: 10px;">투표 진행 중...</div>
-                    </div>
-                </div>
-            </div>
-            
             <button class="btn-secondary" onclick="showAdminLogin()">결과 보기 (관리자)</button>
         </div>
 
@@ -468,6 +460,16 @@
                 <div class="stat-item">
                     <span>총 투표 수</span>
                     <strong id="totalVotes">0표</strong>
+                </div>
+            </div>
+
+            <!-- 전체 후보 득표 현황 -->
+            <div class="section" style="margin-top: 20px;">
+                <div class="live-stats">
+                    <div class="live-stats-title">📊 전체 후보 득표 현황</div>
+                    <div id="liveVoteStats">
+                        <div class="empty-message" style="padding: 10px;">투표 진행 중...</div>
+                    </div>
                 </div>
             </div>
 
