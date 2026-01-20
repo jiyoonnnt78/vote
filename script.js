@@ -116,29 +116,41 @@ function startVoting() {
         return;
     }
     
+    // 투표자 선택 목록 업데이트
+    updateVoterSelect();
+    
     // 투표 선택지 초기 업데이트
     updateVoteOptions();
-    
-    // 이름 입력 시 선택지 업데이트
-    const voterNameInput = document.getElementById('voterName');
-    if (voterNameInput) {
-        voterNameInput.addEventListener('input', updateVoteOptions);
-    }
     
     // 화면 전환
     document.getElementById('adminInterface').classList.add('hidden');
     document.getElementById('voterInterface').classList.remove('hidden');
 }
 
+// 투표자 선택 목록 업데이트
+function updateVoterSelect() {
+    const voterSelect = document.getElementById('voterSelect');
+    
+    const options = students.map(student => 
+        `<option value="${student.id}">${student.name} (${student.number})</option>`
+    ).join('');
+    
+    voterSelect.innerHTML = '<option value="">선택하세요</option>' + options;
+    
+    // 투표자 선택 시 선택지 업데이트
+    voterSelect.addEventListener('change', updateVoteOptions);
+}
+
 // 투표 선택지 업데이트
 function updateVoteOptions() {
     const firstChoice = document.getElementById('firstChoice');
     const secondChoice = document.getElementById('secondChoice');
-    const voterName = document.getElementById('voterName').value.trim();
+    const voterSelect = document.getElementById('voterSelect');
+    const voterId = voterSelect.value;
     
-    // 자기 이름 제외한 학생 목록
+    // 자기 자신 제외한 학생 목록
     const availableStudents = students.filter(student => 
-        student.name !== voterName
+        student.id != voterId
     );
     
     const options = availableStudents.map(student => 
@@ -176,19 +188,21 @@ function updateLiveStats() {
 
 // 투표 제출
 function submitVote() {
-    const grade = document.getElementById('voterGrade').value;
-    const voterName = document.getElementById('voterName').value.trim();
+    const voterSelect = document.getElementById('voterSelect');
+    const voterId = voterSelect.value;
     const firstChoice = document.getElementById('firstChoice').value;
     const secondChoice = document.getElementById('secondChoice').value;
     
     // 유효성 검사
-    if (!grade) {
-        alert('학년을 입력해주세요.');
+    if (!voterId) {
+        alert('본인을 선택해주세요.');
         return;
     }
     
-    if (!voterName) {
-        alert('이름을 입력해주세요.');
+    // 중복 투표 확인
+    const alreadyVoted = voters.find(v => v.voterId == voterId);
+    if (alreadyVoted) {
+        alert('이미 투표를 완료했습니다!');
         return;
     }
     
@@ -202,13 +216,17 @@ function submitVote() {
         return;
     }
     
+    // 투표자 정보 찾기
+    const voter = students.find(s => s.id == voterId);
+    
     // 투표 기록
     votes[firstChoice] = (votes[firstChoice] || 0) + 1;
     votes[secondChoice] = (votes[secondChoice] || 0) + 1;
     
     voters.push({
-        grade: grade,
-        name: voterName,
+        voterId: voterId,
+        name: voter.name,
+        number: voter.number,
         timestamp: new Date().toISOString(),
         choices: [firstChoice, secondChoice]
     });
@@ -216,15 +234,14 @@ function submitVote() {
     saveData();
     
     // 입력 초기화
-    document.getElementById('voterGrade').value = '';
-    document.getElementById('voterName').value = '';
+    voterSelect.value = '';
     document.getElementById('firstChoice').value = '';
     document.getElementById('secondChoice').value = '';
     
     alert('투표가 완료되었습니다!');
     
-    // 학년 입력창에 포커스
-    document.getElementById('voterGrade').focus();
+    // 투표자 선택으로 포커스
+    voterSelect.focus();
 }
 
 // 관리자 로그인 모달 표시
@@ -290,9 +307,39 @@ function showResults() {
     // 실시간 투표 현황 업데이트
     updateLiveStats();
     
+    // 투표 내역 테이블 업데이트
+    updateVoteDetailTable();
+    
     // 화면 전환
     document.getElementById('voterInterface').classList.add('hidden');
     document.getElementById('resultInterface').classList.remove('hidden');
+}
+
+// 투표 내역 테이블 업데이트
+function updateVoteDetailTable() {
+    const tableBody = document.getElementById('voteDetailBody');
+    
+    if (voters.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #999;">투표 내역이 없습니다</td></tr>';
+        return;
+    }
+    
+    tableBody.innerHTML = voters.map((voter, index) => {
+        // 투표자가 선택한 학생들 이름 찾기
+        const choice1 = students.find(s => s.id == voter.choices[0]);
+        const choice2 = students.find(s => s.id == voter.choices[1]);
+        
+        const choice1Name = choice1 ? choice1.name : '알 수 없음';
+        const choice2Name = choice2 ? choice2.name : '알 수 없음';
+        
+        return `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${voter.name}</strong></td>
+                <td class="vote-choices">${choice1Name}, ${choice2Name}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // 투표 화면으로 돌아가기
