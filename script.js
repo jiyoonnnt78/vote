@@ -3,6 +3,9 @@ let students = [];
 let votes = {};
 let voters = [];
 
+// 관리자 비밀번호 (원하는 비밀번호로 변경 가능)
+const ADMIN_PASSWORD = "1234";
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     loadData();
@@ -132,6 +135,34 @@ function updateVoteOptions() {
     
     firstChoice.innerHTML = '<option value="">선택하세요</option>' + options;
     secondChoice.innerHTML = '<option value="">선택하세요</option>' + options;
+    
+    // 실시간 투표 현황 업데이트
+    updateLiveStats();
+}
+
+// 실시간 투표 현황 업데이트
+function updateLiveStats() {
+    const statsContainer = document.getElementById('liveVoteStats');
+    
+    if (voters.length === 0) {
+        statsContainer.innerHTML = '<div class="empty-message" style="padding: 10px;">아직 투표가 없습니다</div>';
+        return;
+    }
+    
+    // 득표수 기준으로 정렬
+    const sortedStudents = students
+        .map(student => ({
+            ...student,
+            voteCount: votes[student.id] || 0
+        }))
+        .sort((a, b) => b.voteCount - a.voteCount);
+    
+    statsContainer.innerHTML = sortedStudents.map(student => `
+        <div class="candidate-votes">
+            <span class="candidate-name">${student.name}</span>
+            <span class="votes-number">${student.voteCount}표</span>
+        </div>
+    `).join('');
 }
 
 // 투표 제출
@@ -168,6 +199,9 @@ function submitVote() {
     
     saveData();
     
+    // 실시간 투표 현황 업데이트
+    updateLiveStats();
+    
     // 입력 초기화
     document.getElementById('voterGrade').value = '';
     document.getElementById('firstChoice').value = '';
@@ -177,6 +211,32 @@ function submitVote() {
     
     // 학년 입력창에 포커스
     document.getElementById('voterGrade').focus();
+}
+
+// 관리자 로그인 모달 표시
+function showAdminLogin() {
+    document.getElementById('adminModal').classList.add('active');
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminPassword').focus();
+}
+
+// 관리자 모달 닫기
+function closeAdminModal() {
+    document.getElementById('adminModal').classList.remove('active');
+}
+
+// 관리자 비밀번호 확인
+function checkAdminPassword() {
+    const password = document.getElementById('adminPassword').value;
+    
+    if (password === ADMIN_PASSWORD) {
+        closeAdminModal();
+        showResults();
+    } else {
+        alert('비밀번호가 틀렸습니다.');
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminPassword').focus();
+    }
 }
 
 // 결과 보기
@@ -246,6 +306,7 @@ function resetAll() {
 document.addEventListener('DOMContentLoaded', function() {
     const nameInput = document.getElementById('studentName');
     const numberInput = document.getElementById('studentNumber');
+    const adminPassword = document.getElementById('adminPassword');
     
     if (nameInput && numberInput) {
         nameInput.addEventListener('keypress', function(e) {
@@ -257,6 +318,14 @@ document.addEventListener('DOMContentLoaded', function() {
         numberInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 addStudent();
+            }
+        });
+    }
+    
+    if (adminPassword) {
+        adminPassword.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
             }
         });
     }
