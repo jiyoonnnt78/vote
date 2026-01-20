@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바른비 2인 선정 투표</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .student-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .student-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .student-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .student-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .student-number {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .remove-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #ee5a6f;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: #26de81;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #20bf6b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(38, 222, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .result-section {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .winner-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .winner-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .winner-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .winner-number {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .stats {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 관리자 인터페이스 -->
+        <div id="adminInterface">
+            <h1>🏆 바른비 2인 선정 투표</h1>
+            <p class="subtitle">대학형 초등학생 투표 시스템</p>
+
+            <!-- 학생 추가 섹션 -->
+            <div class="section">
+                <div class="section-title">학생 추가</div>
+                <div class="input-group">
+                    <label for="studentName">학생 이름</label>
+                    <input type="text" id="studentName" placeholder="이름을 입력하세요">
+                </div>
+                <div class="input-group">
+                    <label for="studentNumber">학번</label>
+                    <input type="text" id="studentNumber" placeholder="학번을 입력하세요">
+                </div>
+                <button class="btn-primary" onclick="addStudent()">학생 추가</button>
+            </div>
+
+            <!-- 학생 목록 -->
+            <div class="section">
+                <div class="section-title">등록된 학생 목록 (<span id="studentCount">0</span>명)</div>
+                <div class="student-list" id="studentList">
+                    <div class="empty-message">등록된 학생이 없습니다.</div>
+                </div>
+            </div>
+
+            <!-- 투표 시작 -->
+            <button class="btn-success" onclick="startVoting()">투표 시작하기</button>
+        </div>
+
+        <!-- 투표자 인터페이스 -->
+        <div id="voterInterface" class="hidden">
+            <h1>🗳️ 바른비 2인 선정</h1>
+            <p class="subtitle">두 명을 선택해주세요</p>
+
+            <div class="section">
+                <div class="section-title">투표자 정보</div>
+                <div class="input-group">
+                    <label for="voterGrade">학년</label>
+                    <input type="number" id="voterGrade" placeholder="학년 입력" min="1" max="6">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">첫 번째 선택</div>
+                <div class="input-group">
+                    <select id="firstChoice">
+                        <option value="">선택하세요</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">두 번째 선택</div>
+                <div class="input-group">
+                    <select id="secondChoice">
+                        <option value="">선택하세요</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="submitVote()">투표하기</button>
+            <button class="btn-secondary" onclick="showResults()">결과 보기 (관리자)</button>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="resultInterface" class="hidden">
+            <h1>🎉 투표 결과</h1>
+            <p class="subtitle">최종 바른비 2인</p>
+
+            <div class="winner-card">
+                <div class="winner-title">🥇 1위</div>
+                <div class="winner-name" id="firstWinner">-</div>
+                <div class="winner-number" id="firstWinnerNumber">-</div>
+                <div style="margin-top: 10px; font-size: 18px;" id="firstWinnerVotes">0표</div>
+            </div>
+
+            <div class="winner-card">
+                <div class="winner-title">🥈 2위</div>
+                <div class="winner-name" id="secondWinner">-</div>
+                <div class="winner-number" id="secondWinnerNumber">-</div>
+                <div style="margin-top: 10px; font-size: 18px;" id="secondWinnerVotes">0표</div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span>총 투표자 수</span>
+                    <strong id="totalVoters">0명</strong>
+                </div>
+                <div class="stat-item">
+                    <span>총 투표 수</span>
+                    <strong id="totalVotes">0표</strong>
+                </div>
+            </div>
+
+            <button class="btn-secondary" onclick="backToVoting()">투표로 돌아가기</button>
+            <button class="btn-primary" onclick="resetAll()">처음으로</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
