@@ -96,18 +96,6 @@
             margin-top: 10px;
         }
 
-        .student-item {
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-            gap: 10px;
-        }
-
         .student-item:hover {
             background: #e9ecef;
             transform: translateX(5px);
@@ -137,16 +125,29 @@
             background: #ff4757;
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 11px;
             transition: background 0.2s;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .remove-btn:hover {
             background: #ee5a6f;
+        }
+        
+        .student-item {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            gap: 15px;
         }
 
         button {
@@ -299,6 +300,42 @@
             color: #667eea;
         }
 
+        .vote-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .vote-table th {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .vote-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        .vote-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .vote-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .vote-choices {
+            font-size: 12px;
+            color: #666;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -400,14 +437,12 @@
             <p class="subtitle">두 명을 선택해주세요</p>
 
             <div class="section">
-                <div class="section-title">투표자 정보</div>
+                <div class="section-title">내 정보</div>
                 <div class="input-group">
-                    <label for="voterGrade">학년</label>
-                    <input type="number" id="voterGrade" placeholder="학년 입력" min="1" max="6">
-                </div>
-                <div class="input-group">
-                    <label for="voterName">이름</label>
-                    <input type="text" id="voterName" placeholder="이름 입력">
+                    <label for="voterSelect">나는 누구인가요?</label>
+                    <select id="voterSelect">
+                        <option value="">선택하세요</option>
+                    </select>
                 </div>
             </div>
 
@@ -470,6 +505,24 @@
                     <div id="liveVoteStats">
                         <div class="empty-message" style="padding: 10px;">투표 진행 중...</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- 투표 내역 상세 -->
+            <div class="section" style="margin-top: 20px;">
+                <div class="section-title">📋 투표 내역 상세</div>
+                <div style="overflow-x: auto;">
+                    <table class="vote-table" id="voteDetailTable">
+                        <thead>
+                            <tr>
+                                <th>순번</th>
+                                <th>투표자</th>
+                                <th>선택한 학생</th>
+                            </tr>
+                        </thead>
+                        <tbody id="voteDetailBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
